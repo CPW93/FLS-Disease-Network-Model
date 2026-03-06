@@ -70,8 +70,6 @@ def create_adjacency_matrix(distance_matrix):
 def get_susceptible_to_infected_distances(distance_matrix, susceptible_indices, infected_indices):
     return distance_matrix[np.ix_(susceptible_indices, infected_indices)]
 
-
-
 # ---- Plot mapping (6 plots from create_graphs_with_gaps order) ----
 def build_node_to_plot_map(coordinates):
     """
@@ -226,7 +224,6 @@ def SEIR_model(timesteps, theta, beta_non,
 
     return status_matrix
 
-
 def compute_summaries(status_matrix):
     """ record infections as dataframe """
    
@@ -239,14 +236,12 @@ def compute_summaries(status_matrix):
 
     return resDicts['I']
 
-
 def _merge_dict(dict1, dict2):
     """
     Function to merge two dictionaries
     """
     res = {**dict1, **dict2}
     return res
-
 
 def data_indiv_simulation(model, prior_args_model=None, fixed_args_model=None):
     if prior_args_model is None:
@@ -278,7 +273,6 @@ def data_indiv_simulation(model, prior_args_model=None, fixed_args_model=None):
     
     return dict_summaries, dict_params
 
-
 ##################################################################################    
 
 # Define the distance that we will use, the standardized Euclidean or Absolute distance
@@ -287,10 +281,8 @@ def distance_abs(df_sim_summaries, df_obs_summaries):
     dist = np.sqrt(np.sum(np.array( ( (df_sim_summaries.iloc[0,:] - df_obs_summaries.iloc[0,:]) )**2 )))   
     return dist
 
-
 def distance_func(df_sim_summaries, df_obs_summaries):  
       return distance_abs(df_sim_summaries, df_obs_summaries)
-
 
 def _is_discrete(dist):
     "To identify whether the ss.rv_frozen dist is discrete"
@@ -340,29 +332,6 @@ def _perturb_continuous_param_on_support(prior_cont, perturb_kernel):
 
     return perturbed_float
 
-
-
-EPS = 1e-300  # avoid log(0)
-
-def logspace_from_bounds(lo, hi, n):
-    lo = max(lo, EPS)
-    hi = max(hi, lo*(1+1e-12))
-    return np.logspace(np.log10(lo), np.log10(hi), num=n)
-
-def fit_lognorm_from_samples(x):
-    """Fit log-normal to positive samples x (work on ln(x)). Returns frozen rv."""
-    x = np.asarray(x, float)
-    x = x[x > 0]
-    if x.size == 0:
-        # fall back to a weak prior if no positive winners (shouldn't happen with our grid)
-        return ss.lognorm(s=1.0, scale=np.exp(np.log(1e-6)))
-    ln = np.log(np.clip(x, EPS, None))
-    mu  = float(np.mean(ln))
-    sig = float(np.std(ln, ddof=1)) if ln.size > 1 else 0.3
-    return ss.lognorm(s=sig, scale=np.exp(mu))
-
-
-
 def run_grid_search(initial_infectednodes, label="scenario"):
     """
     Fast grid search using LOG-SPACED grids for positive params (no zeros),
@@ -381,10 +350,10 @@ def run_grid_search(initial_infectednodes, label="scenario"):
 
     # ---- thin, sensible ranges (log-space for positive tiny params) ----
     
-    theta_range    = np.logspace(-6, -3, 5)      # 5 pts: 1e-6..1e-2
-    beta_non_range = np.logspace(-9, -5, 5)     # 5 pts: 1e-10..1e-6
+    theta_range    = np.logspace(-6, -3, 5)      # 5 pts: 1e-6..1e-3
+    beta_non_range = np.logspace(-9, -5, 5)     # 5 pts: 1e-10..1e-5
     xi_range       = np.logspace(1, 3.8, 5)    # (5 pts: ~ 500..6300 
-    tau_non_range  = np.logspace(-3, -1, 4)      # 4 pts: 1e-5..1e-1
+    tau_non_range  = np.logspace(-3, -1, 4)      # 4 pts: 1e-3..1e-1
 
     rho_beta_range = [0.1, 1.0, 1.5, 2]             
     rho_tau_range  = [0.1, 1.0, 1.5, 2]             
@@ -511,7 +480,6 @@ fixed_args_model = {
     "node_to_plot": node_to_plot,
     "plot_practice": plot_practice
 }
-
 
 # ABC-SMC configuration
 threshold_init = 20000
@@ -675,8 +643,6 @@ def abc_RSMCABC(model,
            
             while num_acc_next < num_drop_sim:
            
-           
-               
                 ### Sample an old parameter value from the
                 ### num_acc_sim - num_drop_sim previously accepted values
                 idx_sel = np.random.choice(df_params.index[:(num_acc_sim-num_drop_sim)])
@@ -788,8 +754,6 @@ def abc_RSMCABC(model,
 
         return df_params, df_dist_acc, sim_count_total, threshold_values
    
-
-
 # -----------------------------
 # Define Seed Scenarios
 # -----------------------------
@@ -858,6 +822,7 @@ for scenario in scenarios:
     file_path = os.path.join(folder_path, file_name)
     np.savetxt(file_path, posterior)
     print(f"Posterior for {scenario} saved at: {file_path}")
+
 
 
 
