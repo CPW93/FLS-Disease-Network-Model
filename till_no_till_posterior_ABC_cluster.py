@@ -7,8 +7,6 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import time
-
-
 from itertools import product
 from tqdm import tqdm
 from scipy.spatial.distance import cdist
@@ -18,8 +16,6 @@ from scipy.stats import rv_discrete, rv_continuous
 from scipy.spatial import KDTree
 from scipy.sparse import dok_matrix
 from sklearn.neighbors import NearestNeighbors
-
-
 
 """Create Network"""
 ###############################################################################
@@ -59,18 +55,14 @@ def create_combined_distance_matrix(coordinates):
 
     return combined_D.toarray()
 
-
 def create_adjacency_matrix(distance_matrix):
     num_vertices = len(distance_matrix)
     row_idx, col_idx = np.where(distance_matrix > 0)
     adjacency_matrix = csr_matrix((np.ones(len(row_idx), dtype=int), (row_idx, col_idx)), shape=(num_vertices, num_vertices))
     return adjacency_matrix
 
-
 def get_susceptible_to_infected_distances(distance_matrix, susceptible_indices, infected_indices):
     return distance_matrix[np.ix_(susceptible_indices, infected_indices)]
-
-
 
 # ---- Plot mapping (6 plots from create_graphs_with_gaps order) ----
 def build_node_to_plot_map(coordinates):
@@ -213,7 +205,6 @@ def SEIRB_network_tillage(
 
     return status_matrix, B_history
 
-
 def SEIR_model(timesteps, theta, beta_non,            
     rho_beta, sigma, gamma, xi,                  
     r, k, tau_non, rho_tau, initial_infectednodes, d_threshold, node_to_plot, plot_practice):
@@ -285,7 +276,6 @@ def distance_abs(df_sim_summaries, df_obs_summaries):
     dist = np.sum(np.sqrt(np.array( ( (df_sim_summaries.iloc[0,:] - df_obs_summaries.iloc[0,:]) )**2 )))   
     return dist
 
-
 def distance_func(df_sim_summaries, df_obs_summaries):  
       return distance_abs(df_sim_summaries, df_obs_summaries)
 
@@ -304,7 +294,6 @@ def _is_continuous(dist):
         return isinstance(dist.dist, rv_continuous)
     else:
         return isinstance(dist, rv_continuous)
-
 
 def _perturb_discrete_param_on_support(prior_disc, perturb_kernel):
     """ Perturb a discrete parameter thanks to a truncated Gaussian distribution, and rounding of the perturbed value
@@ -456,10 +445,8 @@ df_obs_summaries.columns = observed_timesteps
 # Print the DataFrame
 print(df_obs_summaries)
 
-
 """The following lines create fix graph or network as the real field.
 It helps to improve convergency since graph creates outside of the SEIR function."""
-
 
 dimensions = [(72, 4), (72, 4),(72, 4), (72, 4), (72, 4), (72, 4)]  # Example dimensions for the grids
 gaps = [150, 150]
@@ -488,7 +475,6 @@ fixed_args_model = {
     "plot_practice": plot_practice
 }
 
-
 # ABC-SMC configuration
 threshold_init = 50000
 threshold_final = 50
@@ -497,7 +483,6 @@ scale_factor = 2
 num_acc_sim = 200
 folder_path = r"C:\Users\Chinthaka\OneDrive\Desktop\ABC\July"
 os.makedirs(folder_path, exist_ok=True)
-
 
 #---------------------------------------------------------------------------------------------------------------------------
 
@@ -774,7 +759,6 @@ def get_initial_seeds(count=52, cluster_center=None):
     indices = nn.kneighbors([cluster_center], return_distance=False)[0]
     return indices.tolist()
 
-
 # -----------------------------
 # Run ABC for both scenarios
 # -----------------------------
@@ -794,7 +778,6 @@ for scenario in scenarios:
     _, prior_args_model, theta_bounds, beta_non_bounds, rho_beta_bounds, xi_bounds, dthresh_bounds, tau_non_bounds, rho_tau_bounds  = run_grid_search(
         seeds, label=scenario
     )
-
 
     fixed_args_model['initial_infectednodes'] = seeds
 
@@ -827,8 +810,3 @@ for scenario in scenarios:
     file_path = os.path.join(folder_path, file_name)
     np.savetxt(file_path, posterior)
     print(f"Posterior for {scenario} saved at: {file_path}")
-
-
-
-
-
