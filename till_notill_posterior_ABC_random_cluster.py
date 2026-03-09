@@ -8,7 +8,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import time
 
-
 from itertools import product
 from tqdm import tqdm
 from scipy.spatial.distance import cdist
@@ -18,8 +17,6 @@ from scipy.stats import rv_discrete, rv_continuous
 from scipy.spatial import KDTree
 from scipy.sparse import dok_matrix
 from sklearn.neighbors import NearestNeighbors
-
-
 
 """Create Network"""
 ###############################################################################
@@ -59,13 +56,11 @@ def create_combined_distance_matrix(coordinates):
 
     return combined_D.toarray()
 
-
 def create_adjacency_matrix(distance_matrix):
     num_vertices = len(distance_matrix)
     row_idx, col_idx = np.where(distance_matrix > 0)
     adjacency_matrix = csr_matrix((np.ones(len(row_idx), dtype=int), (row_idx, col_idx)), shape=(num_vertices, num_vertices))
     return adjacency_matrix
-
 
 def get_susceptible_to_infected_distances(distance_matrix, susceptible_indices, infected_indices):
     return distance_matrix[np.ix_(susceptible_indices, infected_indices)]
@@ -210,7 +205,6 @@ def SEIRB_network_tillage(
         B_history[t] = Bp
 
     return status_matrix, B_history
-
 
 def SEIR_model(timesteps, theta, beta_non,            
     rho_beta, sigma, gamma, xi,                  
@@ -436,7 +430,6 @@ def run_grid_search(initial_infectednodes, label="scenario"):
 
 ###############################################################################
 
-
 # Observed data and their corresponding time steps
 observed_timesteps = [0, 45, 50, 75, 89, 96, 117, 138]
 
@@ -468,7 +461,6 @@ plot_practice = build_plot_practice()
 G = nx.from_numpy_array(combined_adjacency_matrix)
 A = nx.to_scipy_sparse_array(G)
 
-
 # Define fixed parameters
 
 fixed_args_model = {
@@ -490,7 +482,6 @@ num_acc_sim = 200
 folder_path = r"C:\Users\Chinthaka\OneDrive\Desktop\ABC\July"
 os.makedirs(folder_path, exist_ok=True)
 
-
 #---------------------------------------------------------------------------------------------------------------------------
 
 """ Implementation of the replenishment SMC ABC algorithm.
@@ -501,8 +492,6 @@ and Pettitt, (2011).
 Drovandi, C. C. and Pettitt, A. N. "Estimation of Parameters for
 Macroparasite Population Evolution Using Approximate Bayesian Computation"
 Biometrics, 67, 225-233, (2011)."""
-
-
 
 def abc_RSMCABC(model,
                 prior_args_model=None, fixed_args_model=None,
@@ -572,8 +561,6 @@ def abc_RSMCABC(model,
             
             # Merge fixed parameters
             args_model = _merge_dict(sim_values_args_model, fixed_args_model)
-
-    
     
     # Simulate from model
             data_sim = model(**args_model)  
@@ -760,15 +747,11 @@ def abc_RSMCABC(model,
 
 flat_coordinates = np.vstack(coordinates)
 
-import numpy as np
-
 # Random seed selector
 def get_initial_seeds(count=52, cluster_center=None):
     # ignore cluster_center if we want random seeds
     indices = np.random.choice(len(flat_coordinates), size=count, replace=False)
     return indices.tolist()
-
-
 
 # -----------------------------
 # Run ABC for both scenarios
@@ -789,7 +772,6 @@ for scenario in scenarios:
     _, prior_args_model, theta_bounds, beta_non_bounds, rho_beta_bounds, xi_bounds, dthresh_bounds, tau_non_bounds, rho_tau_bounds  = run_grid_search(
         seeds, label=scenario
     )
-
 
     fixed_args_model['initial_infectednodes'] = seeds
 
@@ -822,6 +804,7 @@ for scenario in scenarios:
     file_path = os.path.join(folder_path, file_name)
     np.savetxt(file_path, posterior)
     print(f"Posterior for {scenario} saved at: {file_path}")
+
 
 
 
