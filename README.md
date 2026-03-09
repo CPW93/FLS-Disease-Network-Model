@@ -5,7 +5,7 @@
 If you use this code in your research, please cite:
 
 Weerarathna, C., Le, T., & Wang, J. (2026).
-Spatial SEIR Network Model for Frogeye Leaf Spot.
+Understanding and Managing Frogeye Leaf Spot through Network-Based Modeling in Soybean.
 
 BibTeX:
 
