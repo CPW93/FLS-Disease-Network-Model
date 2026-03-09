@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+title: "Spatial SEIR Network Model for Frogeye Leaf Spot"
+message: "If you use this code, please cite the repository."
+authors:
+  - family-names: Weerarathna
+    given-names: Chinthaka
+  - family-names: Le
+    given-names: Thien
+  - family-names: Wang
+    given-names: Jin
+date-released: 2026
+version: 1.0
